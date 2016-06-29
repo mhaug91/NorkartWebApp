@@ -22,47 +22,47 @@ namespace norkartSommerWebApp.Models
         private DocumentClient client;
         JsonValues value;
 
-        public static void Main(JsonValues value)
+        public static void Main(JsonValues value, string dbName, string docName)
         {
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + value);
             try
             {
                 SendToDocDB p = new SendToDocDB();
-                p.init(value).Wait();
-                
+                p.init(value, dbName, docName).Wait();
+
             }
             catch (DocumentClientException de)
             {
                 Exception baseException = de.GetBaseException();
                 Console.WriteLine("{0} error occurred: {1}, Message: {2}", de.StatusCode, de.Message, baseException.Message);
-                
+
             }
             catch (Exception e)
             {
                 Exception baseException = e.GetBaseException();
                 Console.WriteLine("Error: {0}, Message: {1}", e.Message, baseException.Message);
-                
+
             }
-            
+
         }
 
         // ADD THIS PART TO YOUR CODE
-        private async Task init(JsonValues value)
+        private async Task init(JsonValues value, string dbName, string docName)
         {
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + value);
             this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
-            
+
             this.value = value;
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 1");
-            this.CreateDatabaseIfNotExists("TempAndHumDB").ConfigureAwait(false);
+            this.CreateDatabaseIfNotExists(dbName).ConfigureAwait(false);
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 2");
-            
-            this.CreateDocumentCollectionIfNotExists("TempAndHumDB", "Values").ConfigureAwait(false);
-            
-            
-            
-            this.CreateValuesDocumentIfNotExists("TempAndHumDB", "Values", value).ConfigureAwait(false);
-            
+
+            this.CreateDocumentCollectionIfNotExists(dbName, docName).ConfigureAwait(false);
+
+
+
+            this.CreateValuesDocumentIfNotExists(dbName, docName, value).ConfigureAwait(false);
+
         }
 
         private async Task CreateDatabaseIfNotExists(string databaseName)
@@ -94,7 +94,7 @@ namespace norkartSommerWebApp.Models
             try
             {
                 await this.client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName)).ConfigureAwait(false);
-                
+
             }
             catch (DocumentClientException de)
             {
@@ -113,12 +113,12 @@ namespace norkartSommerWebApp.Models
                         collectionInfo,
                         new RequestOptions { OfferThroughput = 400 }).ConfigureAwait(false);
 
-                    
+
                 }
                 else
                 {
                     throw;
-                    
+
                 }
             }
         }
@@ -135,7 +135,7 @@ namespace norkartSommerWebApp.Models
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
-                    
+
                 }
                 else
                 {
@@ -150,6 +150,9 @@ namespace norkartSommerWebApp.Models
             public string name { get; set; }
             public double humidity { get; set; }
             public double temperature { get; set; }
+            public string date { get; set; }
+            public double longitude { get; set; }
+            public double latitude { get; set; }
             public override string ToString()
             {
                 return JsonConvert.SerializeObject(this);

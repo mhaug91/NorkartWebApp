@@ -38,10 +38,17 @@ namespace WebApiController.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody]SendToDocDB.JsonValues s)
+        public void PostTempAndHum([FromBody]SendToDocDB.JsonValues s)
         {
+
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + s);
-            SendToDocDB.Main(s);
+            SendToDocDB.Main(s, "Telemetry", "TempAndHum");
+
+
+
+
+
+
             /*DeviceClient deviceClient;
 
             string iotHubUri = "norkartiothub.azure-devices.net";
@@ -93,6 +100,7 @@ namespace WebApiController.Controllers
 
         }
 
-    }
 
     }
+
+}
