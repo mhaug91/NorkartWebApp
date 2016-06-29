@@ -59,8 +59,6 @@ namespace norkartSommerWebApp.Models
 
             this.CreateDocumentCollectionIfNotExists(dbName, docName).ConfigureAwait(false);
 
-
-
             this.CreateValuesDocumentIfNotExists(dbName, docName, value).ConfigureAwait(false);
 
         }

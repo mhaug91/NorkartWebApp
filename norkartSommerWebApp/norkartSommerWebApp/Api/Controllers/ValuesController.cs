@@ -42,6 +42,7 @@ namespace WebApiController.Controllers
         {
 
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + s);
+            System.Diagnostics.Trace.TraceWarning(s.ToString());
             SendToDocDB.Main(s, "Telemetry", "TempAndHum");
 
 
