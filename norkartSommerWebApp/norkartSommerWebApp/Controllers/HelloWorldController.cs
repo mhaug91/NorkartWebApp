@@ -14,9 +14,11 @@ namespace norkartSommerWebApp.Controllers
             return View();
         }
 
-        public String Welcome()
+        public ActionResult Welcome(string name, int numTimes = 1)
         {
-            return "hi world";
+            ViewBag.Message = "Hello " + name;
+            ViewBag.NumTimes = numTimes;
+            return View();
         }
 
         public String Default()
