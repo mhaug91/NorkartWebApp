@@ -126,24 +126,7 @@ namespace norkartSommerWebApp.Models
             
             try
             {
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-                IQueryable<JObject> query = this.client.CreateDocumentQuery<JObject>(
-                UriFactory.CreateDocumentCollectionUri(databaseName, collectionName),
-                "SELECT * FROM Test WHERE Test.id = '2016-30-6'",
-                queryOptions);
                 
-                foreach(JObject o in query)
-                {
-                    System.Diagnostics.Debug.WriteLine("QUERY2: " + o["items"]);
-                    var test = o["items"];
-                    System.Diagnostics.Debug.WriteLine("ITEMS: " + items);
-                    items.AddAfterSelf((JObject)o["items"]);
-                    foreach (KeyValuePair<string, Newtonsoft.Json.Linq.JToken> s in o)
-                    {
-                        System.Diagnostics.Debug.WriteLine("QUERY3: " + s);
-                    }
-                    
-                }
                 
 
                 await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
