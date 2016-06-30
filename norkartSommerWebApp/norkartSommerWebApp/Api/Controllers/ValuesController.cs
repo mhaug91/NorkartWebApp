@@ -41,7 +41,8 @@ namespace WebApiController.Controllers
         public void PostTempAndHum([FromBody]SendToDocDB.JsonValues s)
         {
 
-            System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + s);
+            var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
+            telemetry.TrackTrace("Received Object In ¨PostTempAndHum¨ : " + s.ToString());
             SendToDocDB.Main(s, "Telemetry", "TempAndHum");
 
 
