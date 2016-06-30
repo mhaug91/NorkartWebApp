@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace norkartSommerWebApp.Models
 {
@@ -20,11 +21,11 @@ namespace norkartSommerWebApp.Models
         private const string EndpointUri = "https://norkartsommer16db.documents.azure.com:443/";
         private const string PrimaryKey = "nbhmi7c5pD1Pr3PrLfIcSu15evszCnE71zUQkURU7rt9fgV5tdSX7Ss4NEEH4v9Y0kIdCxXeoG6aesh43WR82Q==";
         private DocumentClient client;
-        JsonValues value;
-
-        public static void Main(JsonValues value, string dbName, string docName)
+        Microsoft.ApplicationInsights.TelemetryClient telemetry;
+        
+        public static void Main(JObject value, string dbName, string docName)
         {
-            System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + value);
+            
             try
             {
                 SendToDocDB p = new SendToDocDB();
@@ -34,32 +35,29 @@ namespace norkartSommerWebApp.Models
             catch (DocumentClientException de)
             {
                 Exception baseException = de.GetBaseException();
-                Console.WriteLine("{0} error occurred: {1}, Message: {2}", de.StatusCode, de.Message, baseException.Message);
-                
+                //telemetry.TrackTrace("Exception: " + de);
+
             }
             catch (Exception e)
             {
                 Exception baseException = e.GetBaseException();
-                Console.WriteLine("Error: {0}, Message: {1}", e.Message, baseException.Message);
-                
+                //telemetry.TrackTrace("Exception: " + e);
+
             }
             
         }
 
-        // ADD THIS PART TO YOUR CODE
-        private async Task init(JsonValues value, string dbName, string docName)
+        //Initiates the connections to the DB
+        private async Task init(JObject value, string dbName, string docName)
         {
-            System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + value);
+            telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
             
-            this.value = value;
-            System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 1");
+
+            //await deadlocks the program
             this.CreateDatabaseIfNotExists(dbName).ConfigureAwait(false);
-            System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 2");
             
             this.CreateDocumentCollectionIfNotExists(dbName, docName).ConfigureAwait(false);
-            
-            
             
             this.CreateValuesDocumentIfNotExists(dbName, docName, value).ConfigureAwait(false);
             
@@ -67,11 +65,11 @@ namespace norkartSommerWebApp.Models
 
         private async Task CreateDatabaseIfNotExists(string databaseName)
         {
-            // Check to verify a database with the id=FamilyDB does not exist
+            // Check to verify a database with the name=databaseName does not exist
             try
             {
                 await this.client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName)).ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 3");
+                
             }
             catch (DocumentClientException de)
             {
@@ -79,11 +77,10 @@ namespace norkartSommerWebApp.Models
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDatabaseAsync(new Database { Id = databaseName }).ConfigureAwait(false);
-                    System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 4");
+                    telemetry.TrackTrace("Created New Database: " + databaseName);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: 5");
                     throw;
                 }
             }
@@ -112,8 +109,7 @@ namespace norkartSommerWebApp.Models
                         UriFactory.CreateDatabaseUri(databaseName),
                         collectionInfo,
                         new RequestOptions { OfferThroughput = 400 }).ConfigureAwait(false);
-
-                    
+                    telemetry.TrackTrace("Created New Document Collection: " + collectionName);
                 }
                 else
                 {
@@ -122,40 +118,54 @@ namespace norkartSommerWebApp.Models
                 }
             }
         }
-        private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JsonValues values)
+        private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JObject values)
         {
+            var JsonId = values.Property("id");
+            var items = values.Property("items");
+            
+            
             try
             {
-                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, values.Id)).ConfigureAwait(false);
-                //await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                IQueryable<JObject> query = this.client.CreateDocumentQuery<JObject>(
+                UriFactory.CreateDocumentCollectionUri(databaseName, collectionName),
+                "SELECT * FROM Test WHERE Test.id = '2016-30-6'",
+                queryOptions);
+                
+                foreach(JObject o in query)
+                {
+                    System.Diagnostics.Debug.WriteLine("QUERY2: " + o["items"]);
+                    var test = o["items"];
+                    System.Diagnostics.Debug.WriteLine("ITEMS: " + items);
+                    items.AddAfterSelf((JObject)o["items"]);
+                    foreach (KeyValuePair<string, Newtonsoft.Json.Linq.JToken> s in o)
+                    {
+                        System.Diagnostics.Debug.WriteLine("QUERY3: " + s);
+                    }
+                    
+                }
+                
+
+                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
 
             }
+            //If document does not already exist: create new document
             catch (DocumentClientException de)
             {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + de);
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
-                    
+                    telemetry.TrackTrace("Created New Document: " + JsonId.Value.ToString());
                 }
                 else
                 {
                     throw;
                 }
             }
-        }
-        public class JsonValues
-        {
-            [JsonProperty(PropertyName = "id")]
-            public string Id { get; set; }
-            public string name { get; set; }
-            public double humidity { get; set; }
-            public double temperature { get; set; }
-            public string date { get; set; }
-            public double longitude { get; set; }
-            public double latitude { get; set; }
-            public override string ToString()
+            catch(Exception e)
             {
-                return JsonConvert.SerializeObject(this);
+                System.Diagnostics.Debug.WriteLine("ERROR: " + e);
             }
         }
     }

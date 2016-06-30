@@ -17,6 +17,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebApiController.Controllers
 {
@@ -38,7 +39,7 @@ namespace WebApiController.Controllers
         }
 
         // POST api/<controller>
-        public void PostTempAndHum([FromBody]SendToDocDB.JsonValues s)
+        public void PostTempAndHum([FromBody]JObject s)
         {
 
             System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + s);
