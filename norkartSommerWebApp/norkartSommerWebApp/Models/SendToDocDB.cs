@@ -21,7 +21,7 @@ namespace norkartSommerWebApp.Models
         private const string EndpointUri = "https://norkartsommer16db.documents.azure.com:443/";
         private const string PrimaryKey = "nbhmi7c5pD1Pr3PrLfIcSu15evszCnE71zUQkURU7rt9fgV5tdSX7Ss4NEEH4v9Y0kIdCxXeoG6aesh43WR82Q==";
         private DocumentClient client;
-        static Microsoft.ApplicationInsights.TelemetryClient telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
+        Microsoft.ApplicationInsights.TelemetryClient telemetry;
         
         public static void Main(JObject value, string dbName, string docName)
         {
@@ -35,13 +35,13 @@ namespace norkartSommerWebApp.Models
             catch (DocumentClientException de)
             {
                 Exception baseException = de.GetBaseException();
-                telemetry.TrackTrace("Exception: " + de);
+                //telemetry.TrackTrace("Exception: " + de);
 
             }
             catch (Exception e)
             {
                 Exception baseException = e.GetBaseException();
-                telemetry.TrackTrace("Exception: " + e);
+                //telemetry.TrackTrace("Exception: " + e);
 
             }
             
@@ -50,7 +50,7 @@ namespace norkartSommerWebApp.Models
         //Initiates the connections to the DB
         private async Task init(JObject value, string dbName, string docName)
         {
-            
+            telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
             
 
@@ -120,25 +120,35 @@ namespace norkartSommerWebApp.Models
         }
         private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JObject values)
         {
-            var test = values.Property("id");
+            var JsonId = values.Property("id");
+            var items = values.Property("items");
+            
+            
             try
             {
                 
+                
 
-                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, test.Value.ToString() )).ConfigureAwait(false);
+                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
+
             }
             //If document does not already exist: create new document
             catch (DocumentClientException de)
             {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + de);
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
-                    telemetry.TrackTrace("Created New Document: " + test.Value.ToString());
+                    telemetry.TrackTrace("Created New Document: " + JsonId.Value.ToString());
                 }
                 else
                 {
                     throw;
                 }
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + e);
             }
         }
     }
