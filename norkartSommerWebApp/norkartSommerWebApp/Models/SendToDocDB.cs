@@ -23,13 +23,13 @@ namespace norkartSommerWebApp.Models
         private DocumentClient client;
         Microsoft.ApplicationInsights.TelemetryClient telemetry;
         
-        public static void Main(JObject value, string dbName, string docName)
+        public static void Main(JObject value, string dbName)
         {
             
             try
             {
                 SendToDocDB p = new SendToDocDB();
-                p.init(value, dbName, docName).Wait();
+                p.init(value, dbName).Wait();
                 
             }
             catch (DocumentClientException de)
@@ -48,12 +48,12 @@ namespace norkartSommerWebApp.Models
         }
 
         //Initiates the connections to the DB
-        private async Task init(JObject value, string dbName, string docName)
+        private async Task init(JObject value, string dbName)
         {
             telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
-            
 
+            var docName = value.Property("name").Value.ToString();
             //await deadlocks the program
             this.CreateDatabaseIfNotExists(dbName).ConfigureAwait(false);
             
@@ -126,11 +126,7 @@ namespace norkartSommerWebApp.Models
             
             try
             {
-                
-                
-
                 await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
-
             }
             //If document does not already exist: create new document
             catch (DocumentClientException de)
