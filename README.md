@@ -1,3 +1,0 @@
-# NorkartWebApp
-webapp
-readme
