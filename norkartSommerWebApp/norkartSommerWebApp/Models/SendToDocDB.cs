@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace norkartSommerWebApp.Models
 {
@@ -20,10 +21,9 @@ namespace norkartSommerWebApp.Models
         private const string EndpointUri = "https://norkartsommer16db.documents.azure.com:443/";
         private const string PrimaryKey = "nbhmi7c5pD1Pr3PrLfIcSu15evszCnE71zUQkURU7rt9fgV5tdSX7Ss4NEEH4v9Y0kIdCxXeoG6aesh43WR82Q==";
         private DocumentClient client;
-        JsonValues value;
-        static Microsoft.ApplicationInsights.TelemetryClient telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
-
-        public static void Main(JsonValues value, string dbName, string docName)
+        Microsoft.ApplicationInsights.TelemetryClient telemetry;
+        
+        public static void Main(JObject value, string dbName, string docName)
         {
             
             try
@@ -35,32 +35,29 @@ namespace norkartSommerWebApp.Models
             catch (DocumentClientException de)
             {
                 Exception baseException = de.GetBaseException();
-                telemetry.TrackTrace("Exception: " + de);
+                //telemetry.TrackTrace("Exception: " + de);
 
             }
             catch (Exception e)
             {
                 Exception baseException = e.GetBaseException();
-                telemetry.TrackTrace("Exception: " + e);
+                //telemetry.TrackTrace("Exception: " + e);
 
             }
             
         }
 
-        // ADD THIS PART TO YOUR CODE
-        private async Task init(JsonValues value, string dbName, string docName)
+        //Initiates the connections to the DB
+        private async Task init(JObject value, string dbName, string docName)
         {
-            
+            telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
             
-            this.value = value;
-            
+
+            //await deadlocks the program
             this.CreateDatabaseIfNotExists(dbName).ConfigureAwait(false);
             
-            
             this.CreateDocumentCollectionIfNotExists(dbName, docName).ConfigureAwait(false);
-            
-            
             
             this.CreateValuesDocumentIfNotExists(dbName, docName, value).ConfigureAwait(false);
             
@@ -68,7 +65,7 @@ namespace norkartSommerWebApp.Models
 
         private async Task CreateDatabaseIfNotExists(string databaseName)
         {
-            // Check to verify a database with the id=FamilyDB does not exist
+            // Check to verify a database with the name=databaseName does not exist
             try
             {
                 await this.client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName)).ConfigureAwait(false);
@@ -121,40 +118,37 @@ namespace norkartSommerWebApp.Models
                 }
             }
         }
-        private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JsonValues values)
+        private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JObject values)
         {
+            var JsonId = values.Property("id");
+            var items = values.Property("items");
+            
+            
             try
             {
-                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, values.Id)).ConfigureAwait(false);
-                //await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
+                
+                
+
+                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
 
             }
+            //If document does not already exist: create new document
             catch (DocumentClientException de)
             {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + de);
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
-                    telemetry.TrackTrace("Created New Document: " + values.Id);
+                    telemetry.TrackTrace("Created New Document: " + JsonId.Value.ToString());
                 }
                 else
                 {
                     throw;
                 }
             }
-        }
-        public class JsonValues
-        {
-            [JsonProperty(PropertyName = "id")]
-            public string Id { get; set; }
-            public string name { get; set; }
-            public double humidity { get; set; }
-            public double temperature { get; set; }
-            public string date { get; set; }
-            public double longitude { get; set; }
-            public double latitude { get; set; }
-            public override string ToString()
+            catch(Exception e)
             {
-                return JsonConvert.SerializeObject(this);
+                System.Diagnostics.Debug.WriteLine("ERROR: " + e);
             }
         }
     }
