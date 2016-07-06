@@ -35,7 +35,9 @@ namespace WebApiController.Controllers
         // GET api/<controller>/5
         public string Get(string id)
         {
-            return "A value";
+            var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
+            telemetry.TrackTrace("Received Object In GET : " + id.ToString());
+            return id;
         }
 
         // POST api/<controller>
@@ -44,7 +46,7 @@ namespace WebApiController.Controllers
 
             var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             telemetry.TrackTrace("Received Object In ¨PostTempAndHum¨ : " + s.ToString());
-            SendToDocDB.Main(s, "Test");
+            SendToDocDB.Main(s, "Telemetry");
 
 
 
