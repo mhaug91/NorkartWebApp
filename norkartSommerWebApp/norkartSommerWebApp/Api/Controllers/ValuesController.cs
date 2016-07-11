@@ -25,7 +25,7 @@ namespace WebApiController.Controllers
     public class ValuesController : ApiController
     {
 
-        // GET api/<controller>
+        /*// GET api/<controller>
 
         public IEnumerable<string> Get()
         {
@@ -37,19 +37,19 @@ namespace WebApiController.Controllers
         {
             return "A value";
         }
+        */
 
+        
         // POST api/<controller>
+        /*[ActionName("TempAndHum")]
         public void PostTempAndHum([FromBody]JObject s)
         {
 
             var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             telemetry.TrackTrace("Received Object In ¨PostTempAndHum¨ : " + s.ToString());
-            SendToDocDB.Main(s, "Test");
-
-
-
-
-
+            System.Diagnostics.Debug.WriteLine("1");
+            Console.WriteLine("hei");
+            SendToDocDB.Main(s, "Telemetry");
 
             /*DeviceClient deviceClient;
 
@@ -98,8 +98,21 @@ namespace WebApiController.Controllers
 
             }
             */
+    //        }
+    
+            
 
+        
+        
+    
 
+        [ActionName("AirQuailty")]
+        public async Task PostAirQuailty([FromBody]JObject s)
+        {
+            await SendToDocDB.Main(s, "Telemetry");
+            await SendToLakeStorage.Main(s);
+            
+            return;
         }
         
 
