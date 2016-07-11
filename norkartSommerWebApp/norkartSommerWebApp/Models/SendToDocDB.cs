@@ -23,7 +23,7 @@ namespace norkartSommerWebApp.Models
         private DocumentClient client;
         Microsoft.ApplicationInsights.TelemetryClient telemetry;
         
-        public static void Main(JObject value, string dbName)
+        public async static Task Main(JObject value, string dbName)
         {
             
             try
