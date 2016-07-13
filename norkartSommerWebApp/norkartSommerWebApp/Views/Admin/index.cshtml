@@ -1,0 +1,19 @@
+﻿@*@{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    } *@
+@{
+    ViewBag.Title = "index";
+}
+
+<h2>index</h2>
+@using (Html.BeginForm("IotMessage", "Admin"))
+{
+    <button class="btn btn-default" name="message" value="AirQuality">Start AirQuality</button>
+
+    <button class="btn btn-default" name="message" value="Restart">Restart Device</button>
+
+}
+
+
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Devices.Client;
+﻿
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
@@ -17,6 +17,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
 using Newtonsoft.Json;
+using Microsoft.Azure.Devices;
 using Newtonsoft.Json.Linq;
 
 namespace WebApiController.Controllers
@@ -24,7 +25,7 @@ namespace WebApiController.Controllers
 
     public class ValuesController : ApiController
     {
-
+        
         /*// GET api/<controller>
 
         public IEnumerable<string> Get()
@@ -39,7 +40,7 @@ namespace WebApiController.Controllers
         }
         */
 
-        
+
         // POST api/<controller>
         /*[ActionName("TempAndHum")]
         public void PostTempAndHum([FromBody]JObject s)
@@ -98,23 +99,27 @@ namespace WebApiController.Controllers
 
             }
             */
-    //        }
-    
-            
+        //        }
 
-        
-        
-    
 
-        [ActionName("AirQuailty")]
-        public async Task PostAirQuailty([FromBody]JObject s)
+
+
+
+
+
+
+        public async Task PostAirQuality([FromBody]JObject s)
         {
             await SendToDocDB.Main(s, "Telemetry");
+            HttpResponseMessage res = new HttpResponseMessage();
+            res.Content = new StringContent("Hei");
             await SendToLakeStorage.Main(s);
-            
+
             return;
         }
+
         
+
 
     }
 
