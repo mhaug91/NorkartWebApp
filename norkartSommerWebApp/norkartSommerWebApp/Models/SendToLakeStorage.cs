@@ -86,7 +86,7 @@ namespace norkartSommerWebApp.Models
 
         private static string CreateTmpFile()
         {
-            string fileName = string.Empty;
+            var fileName = string.Empty;
             
             try
             {
@@ -148,28 +148,29 @@ namespace norkartSommerWebApp.Models
             //string file = CreateTmpFile();
             var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
             // Debug.WriteLine("HEI: " + outPutDirectory);
-            var iconPath = Path.Combine(outPutDirectory, "temp.json");
+            if (outPutDirectory != null)
+            {
+                var iconPath = Path.Combine(outPutDirectory, "temp.json");
 
-            //string tempFile = "temp.json";
+                //string tempFile = "temp.json";
 
-            var tempFile = new Uri(iconPath).LocalPath;
+                var tempFile = new Uri(iconPath).LocalPath;
 
-            Debug.WriteLine("tempfile: " + tempFile);
+                Debug.WriteLine("tempfile: " + tempFile);
 
-            UpdateTmpFile(tempFile, obj);
+                UpdateTmpFile(tempFile, obj);
 
-            var tokenCreds = await s.Authenticate(_tenantId, _clientId, _clientKey);
+                var tokenCreds = await s.Authenticate(_tenantId, _clientId, _clientKey);
 
-            _adlsFileSystemClient = new DataLakeStoreFileSystemManagementClient(tokenCreds);
+                _adlsFileSystemClient = new DataLakeStoreFileSystemManagementClient(tokenCreds);
 
-            s.SetupClients(tokenCreds, "3f0352ad-ff15-4d3f-ad65-1af7929780f1");
+                s.SetupClients(tokenCreds, "3f0352ad-ff15-4d3f-ad65-1af7929780f1");
 
-            var objectId = obj.Property("id").Value;
-            Debug.WriteLine("OBJECTID:  " + objectId);
+                var objectId = obj.Property("id").Value;
+                Debug.WriteLine("OBJECTID:  " + objectId);
 
-            s.UploadFile(tempFile, objectId.ToString());
-            
-    
+                s.UploadFile(tempFile, objectId.ToString());
+            }
         }
     }
 }
