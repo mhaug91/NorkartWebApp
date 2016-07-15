@@ -38,7 +38,7 @@ namespace norkartSommerWebApp.Controllers
                 
                 case "AirQuality":
                     // delegate sending to another controller action
-                    await IotHub.Main("startAirQuality");
+                    await IotHub.Main("airquality");
                     
                     return (View("Index"));
                 case "Restart":
@@ -47,7 +47,7 @@ namespace norkartSommerWebApp.Controllers
                     await IotHub.Main("Restart");
                     return (View("Index"));
                 default:
-                    
+                    await IotHub.Main(message);
                     // If they've submitted the form without a submitButton, 
                     // just return the view again.
                     return (View("Index"));

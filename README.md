@@ -9,6 +9,10 @@ Calls /Models/IotHub.cs which handles the logic.
 Receives a JSON object from devices. The object is stored to Azure Lake Storage and DocumentDB
 Calls /Models/SendToDocDB.cs & /Models/SendToLakeStorage.cs which handles the logic.
 
+
+#### SendSmsModule
+Sends sms to a given number.
+
 # Client
 The system only supports one client atm.
 
