@@ -112,12 +112,12 @@ namespace WebApiController.Controllers
         public async Task PostAirQuality([FromBody]JObject s)
         {
             var value = s.Property("telemetry").Value;
-            /*Debug.WriteLine(value);
-            if (value.ToObject<int>() == 0)
+            Debug.WriteLine(value);
+            /*if (value.ToObject<int>() == 0)
             {
                 SendSmsModule.SendSms(value.ToString());
             }*/
-            await SendToDocDB.Main(s, "Telemetry");
+            await SendToDocDb.Main(s, "Telemetry");
             await SendToLakeStorage.Main(s);
 
             return;

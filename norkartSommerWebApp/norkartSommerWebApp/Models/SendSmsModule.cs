@@ -19,8 +19,8 @@ namespace norkartSommerWebApp.Models
 
             var smsDto = new SendSmsDto
             {
-                Avsender = "Sommer16",
-                Tekst = "Dette er en melding fra prosjekt 'Sommer16'",
+                Avsender = "Kongen",
+                Tekst = "Hei Vilde, god tur til Hellas!",
                 DbId = bergenKundeId,
                 Toveis = false,
                 Mottakere = new List<SendSmsMottakerDto>
@@ -28,7 +28,7 @@ namespace norkartSommerWebApp.Models
                 {
                     new SendSmsMottakerDto()
                     {
-                        Mobilnummer = "95781372",
+                        Mobilnummer = "90784845",
                         Atributter = new List<SmsAttributtDto>
                         {
                             //Unike egenskaper for meldingen tilknyttet denne mottaker    

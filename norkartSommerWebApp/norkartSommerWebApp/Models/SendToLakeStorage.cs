@@ -58,8 +58,7 @@ namespace norkartSommerWebApp.Models
         {
             _adlaCatalogClient = new DataLakeAnalyticsCatalogManagementClient(tokenCreds);
 
-            _adlsClient = new DataLakeStoreAccountManagementClient(tokenCreds);
-            _adlsClient.SubscriptionId = subscriptionId;
+            _adlsClient = new DataLakeStoreAccountManagementClient(tokenCreds) {SubscriptionId = subscriptionId};
 
             _adlsFileSystemClient = new DataLakeStoreFileSystemManagementClient(tokenCreds);
         }
@@ -97,12 +96,11 @@ namespace norkartSommerWebApp.Models
                 fileName = Path.GetTempFileName();
 
                 // Craete a FileInfo object to set the file's attributes
-                FileInfo fileInfo = new FileInfo(fileName);
+                var fileInfo = new FileInfo(fileName) {Attributes = FileAttributes.Temporary};
 
                 // Set the Attribute property of this file to Temporary. 
                 // Although this is not completely necessary, the .NET Framework is able 
                 // to optimize the use of Temporary files by keeping them cached in memory.
-                fileInfo.Attributes = FileAttributes.Temporary;
 
                 Debug.WriteLine("TEMP file created at: " + fileName);
             }
@@ -119,8 +117,8 @@ namespace norkartSommerWebApp.Models
             try
             {
                 // Write to the temp file.
-                File.WriteAllText(tmpFile, String.Empty);
-                StreamWriter streamWriter = File.AppendText(tmpFile);
+                File.WriteAllText(tmpFile, string.Empty);
+                var streamWriter = File.AppendText(tmpFile);
                 
                 //File.WriteAllText(tmpFile, string.Empty);
                 streamWriter.Write(obj);
@@ -146,7 +144,7 @@ namespace norkartSommerWebApp.Models
             _adlsAccountName = "sommer16datalakeadls";
 
 
-            SendToLakeStorage s = new SendToLakeStorage();
+            var s = new SendToLakeStorage();
             //string file = CreateTmpFile();
             var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
             // Debug.WriteLine("HEI: " + outPutDirectory);
@@ -154,7 +152,7 @@ namespace norkartSommerWebApp.Models
 
             //string tempFile = "temp.json";
 
-            string tempFile = new Uri(iconPath).LocalPath;
+            var tempFile = new Uri(iconPath).LocalPath;
 
             Debug.WriteLine("tempfile: " + tempFile);
 
