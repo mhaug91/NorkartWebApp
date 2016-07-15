@@ -28,7 +28,7 @@ namespace norkartSommerWebApp.Models
                 {
                     new SendSmsMottakerDto()
                     {
-                        Mobilnummer = "90784845",
+                        Mobilnummer = "XXXXXXXX",
                         Atributter = new List<SmsAttributtDto>
                         {
                             //Unike egenskaper for meldingen tilknyttet denne mottaker    
