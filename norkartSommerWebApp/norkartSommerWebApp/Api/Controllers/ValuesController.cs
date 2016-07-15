@@ -13,6 +13,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
@@ -105,14 +106,18 @@ namespace WebApiController.Controllers
 
 
 
-
+            
 
 
         public async Task PostAirQuality([FromBody]JObject s)
         {
+            var value = s.Property("telemetry").Value;
+            /*Debug.WriteLine(value);
+            if (value.ToObject<int>() == 0)
+            {
+                SendSmsModule.SendSms(value.ToString());
+            }*/
             await SendToDocDB.Main(s, "Telemetry");
-            HttpResponseMessage res = new HttpResponseMessage();
-            res.Content = new StringContent("Hei");
             await SendToLakeStorage.Main(s);
 
             return;
