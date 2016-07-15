@@ -18,13 +18,14 @@ The system only supports one client atm.
 
 #### Python
 ssh pi@dex.local
-cd azure-iot-sdks/python/device/samples/
-Right now only master.py and AirQuality.py is used.
+cd python_telemetry
+Right now only master.py and AirQuality.py is used, but the other files are needed. 
 
 #### master.py
 - Listens for commands from Azure iot hub.
 - Imports airQuality.py and runs it if "startAirQuality" is received. 
 - Restarts the device if "Restart" is received.
+- master.py is run at startup with default program = airquality.py
 
 To add commands edit run() & receive_message_callback().
 

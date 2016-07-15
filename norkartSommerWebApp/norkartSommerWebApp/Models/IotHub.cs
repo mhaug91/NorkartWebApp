@@ -11,18 +11,15 @@ namespace norkartSommerWebApp.Models
 {
     public class IotHub
     {
-
-
-        ServiceClient serviceClient;
-        string connectionString;
-        static string feedback = "";
+        private ServiceClient _serviceClient;
+        private string _connectionString;
+        public static string Feedback = "";
 
         private async Task SendCloudToDeviceMessageAsync(string message)
         {
             Debug.WriteLine("Message: " + message);
-            var commandMessage = new Message(Encoding.ASCII.GetBytes(message));
-            commandMessage.Ack = DeliveryAcknowledgement.Full;
-            await serviceClient.SendAsync("Pi1", commandMessage);
+            var commandMessage = new Message(Encoding.ASCII.GetBytes(message)) {Ack = DeliveryAcknowledgement.Full};
+            await _serviceClient.SendAsync("Pi1", commandMessage);
         }
 
 
@@ -42,8 +39,9 @@ namespace norkartSommerWebApp.Models
                     Debug.WriteLine("FEEDBACK: " + "Empty");
                 }
 
-                feedback = "Received feedback: {0}" + string.Join(", ", feedbackBatch.Records.Select(f => f.StatusCode));
-                Debug.WriteLine("FEEDBACK: " + feedback);
+                if (feedbackBatch == null) continue;
+                Feedback = "Received feedback: {0}" + string.Join(", ", feedbackBatch.Records.Select(f => f.StatusCode));
+                Debug.WriteLine("FEEDBACK: " + Feedback);
                 await feedbackReceiver.CompleteAsync(feedbackBatch);
             }
             
@@ -52,14 +50,17 @@ namespace norkartSommerWebApp.Models
         public static async Task Main(string message)
         {
 
-            IotHub hub = new IotHub();
-            
-            hub.connectionString = "HostName=norkartiothub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Vwd858FmfIZRhe9qqPap4sl5B7joqhSyYSrdk9A1XGU=";
-            hub.serviceClient = ServiceClient.CreateFromConnectionString(hub.connectionString);
+            var hub = new IotHub
+            {
+                _connectionString =
+                    "HostName=norkartiothub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Vwd858FmfIZRhe9qqPap4sl5B7joqhSyYSrdk9A1XGU="
+            };
+
+            hub._serviceClient = ServiceClient.CreateFromConnectionString(hub._connectionString);
             
             await hub.SendCloudToDeviceMessageAsync(message);
 
-            ReceiveFeedbackAsync(hub.serviceClient);
+            ReceiveFeedbackAsync(hub._serviceClient);
 
         }
         
