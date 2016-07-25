@@ -103,12 +103,6 @@ namespace WebApiController.Controllers
         //        }
 
 
-
-
-
-            
-
-
         public async Task PostAirQuality([FromBody]JObject s)
         {
             var value = s.Property("telemetry").Value;
