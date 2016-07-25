@@ -44,7 +44,7 @@ namespace WebApiController.Controllers
 
             var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
             telemetry.TrackTrace("Received Object In ¨PostTempAndHum¨ : " + s.ToString());
-            SendToDocDB.Main(s, "Test");
+            SendToDocDB.Main(s, "Telemetry");
 
 
 
