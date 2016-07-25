@@ -1,0 +1,30 @@
+﻿@*@{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    } *@
+@{
+    ViewBag.Title = "index";
+}
+
+
+@using (Html.BeginForm($"IotMessage", $"Admin"))
+{
+    <div style="display: block; margin-top: 100px">
+        <label>Preset Commands:</label><br/>
+        <button class="btn btn-default" name="message" value="AirQuality">Start AirQuality</button>
+
+        <button class="btn btn-default" name="message" value="Restart">Restart Device</button>
+
+        <button class="btn btn-default" name="message" value="Test">Test Button</button>
+    </div>
+    <div style="margin-top: 50px">
+        <form style="display: block;">
+            <label>Custom Command: </label>
+            <input class="form-control input-sm" name="message" /><br/>
+            <button class="btn btn-danger" type="submit">Submit</button>
+        </form>
+    </div>
+}
+
+
+
+
