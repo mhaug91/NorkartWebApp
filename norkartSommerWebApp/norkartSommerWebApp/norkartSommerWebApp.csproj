@@ -404,7 +404,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\SendSmsModule.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IotHub.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
