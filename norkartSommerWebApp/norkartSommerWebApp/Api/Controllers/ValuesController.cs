@@ -37,6 +37,7 @@ namespace WebApiController.Controllers
             }*/
             await SendToDocDb.Main(s, "Telemetry");
             await SendToLakeStorage.Main(s);
+            await SendToIotHub.Main(s);
 
             return;
 
