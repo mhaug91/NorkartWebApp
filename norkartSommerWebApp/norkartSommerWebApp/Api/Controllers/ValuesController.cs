@@ -35,8 +35,8 @@ namespace WebApiController.Controllers
             {
                 SendSmsModule.SendSms(value.ToString());
             }*/
-            await SendToDocDb.Main(s, "Telemetry");
-            await SendToLakeStorage.Main(s);
+            //await SendToDocDb.Main(s, "Telemetry");
+            //await SendToLakeStorage.Main(s);
             await SendToIotHub.Main(s);
 
             return;

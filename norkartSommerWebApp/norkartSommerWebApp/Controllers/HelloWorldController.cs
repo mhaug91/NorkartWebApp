@@ -21,6 +21,11 @@ namespace norkartSommerWebApp.Controllers
             return View();
         }
 
+        public ActionResult AirQualityReport()
+        {
+            return View();
+        }
+
         public String Default()
         {
             return "default ppage";

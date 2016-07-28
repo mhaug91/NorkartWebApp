@@ -491,6 +491,7 @@
     <Content Include="Scripts\jquery-3.0.0.min.map" />
     <Content Include="TempFiles\temp.json" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\HelloWorld\AirQualityReport.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
