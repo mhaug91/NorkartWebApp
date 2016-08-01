@@ -16,31 +16,31 @@ using Newtonsoft.Json.Linq;
 
 namespace norkartSommerWebApp.Models
 {
-    public class SendToDocDB
+    public class SendToDocDb
     {
         private const string EndpointUri = "https://norkartsommer16db.documents.azure.com:443/";
         private const string PrimaryKey = "nbhmi7c5pD1Pr3PrLfIcSu15evszCnE71zUQkURU7rt9fgV5tdSX7Ss4NEEH4v9Y0kIdCxXeoG6aesh43WR82Q==";
         private DocumentClient client;
         Microsoft.ApplicationInsights.TelemetryClient telemetry;
         
-        public static void Main(JObject value, string dbName)
+        public static async Task Main(JObject value, string dbName)
         {
             
             try
             {
-                SendToDocDB p = new SendToDocDB();
+                var p = new SendToDocDb();
                 p.init(value, dbName).Wait();
                 
             }
             catch (DocumentClientException de)
             {
-                Exception baseException = de.GetBaseException();
+                var baseException = de.GetBaseException();
                 //telemetry.TrackTrace("Exception: " + de);
 
             }
             catch (Exception e)
             {
-                Exception baseException = e.GetBaseException();
+                var baseException = e.GetBaseException();
                 //telemetry.TrackTrace("Exception: " + e);
 
             }
@@ -98,11 +98,13 @@ namespace norkartSommerWebApp.Models
                 // If the document collection does not exist, create a new collection
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
-                    DocumentCollection collectionInfo = new DocumentCollection();
-                    collectionInfo.Id = collectionName;
+                    var collectionInfo = new DocumentCollection
+                    {
+                        Id = collectionName,
+                        IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) {Precision = -1})
+                    };
 
                     //Configure collections for maximum query flexibility including string range queries.
-                    collectionInfo.IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) { Precision = -1 });
 
                     // Here we create a collection with 400 RU/s.
                     await this.client.CreateDocumentCollectionAsync(
@@ -120,13 +122,13 @@ namespace norkartSommerWebApp.Models
         }
         private async Task CreateValuesDocumentIfNotExists(string databaseName, string collectionName, JObject values)
         {
-            var JsonId = values.Property("id");
+            var jsonId = values.Property("id");
             var items = values.Property("items");
             
             
             try
             {
-                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, JsonId.Value.ToString() )).ConfigureAwait(false);
+                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, jsonId.Value.ToString() )).ConfigureAwait(false);
             }
             //If document does not already exist: create new document
             catch (DocumentClientException de)
@@ -135,7 +137,7 @@ namespace norkartSommerWebApp.Models
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
                     await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
-                    telemetry.TrackTrace("Created New Document: " + JsonId.Value.ToString());
+                    telemetry.TrackTrace("Created New Document: " + jsonId.Value.ToString());
                 }
                 else
                 {

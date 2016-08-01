@@ -13,6 +13,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
@@ -25,80 +26,20 @@ namespace WebApiController.Controllers
     public class ValuesController : ApiController
     {
 
-        // GET api/<controller>
 
-        public IEnumerable<string> Get()
+        public async Task PostAirQuality([FromBody]JObject s)
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<controller>/5
-        public string Get(string id)
-        {
-            return "A value";
-        }
-
-        // POST api/<controller>
-        public void PostTempAndHum([FromBody]JObject s)
-        {
-
-            var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
-            telemetry.TrackTrace("Received Object In ¨PostTempAndHum¨ : " + s.ToString());
-            SendToDocDB.Main(s, "Test");
-
-
-
-
-
-
-            /*DeviceClient deviceClient;
-
-            string iotHubUri = "norkartiothub.azure-devices.net";
-            string deviceKey = "vQ6yFQMCW3mSx50SXmPX/PI9QHQOGCKqZip15QFo94E=";
-            deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey("Pi1", deviceKey));
-
-            try
+            var value = s.Property("telemetry").Value;
+            Debug.WriteLine(value);
+            /*if (value.ToObject<int>() == 0)
             {
-                //  create Azure Storage
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=norkartstorageaccount;AccountKey=ywvq9KDDK/F1mqiz1NJ/vEj9lT7wuVrEqWtO1f3hi+i4vw9gOCvJG1rOjVKpjx/Ki1q6rVjG7uUalT+hWdXxCA==");
+                SendSmsModule.SendSms(value.ToString());
+            }*/
+            //await SendToDocDb.Main(s, "Telemetry");
+            //await SendToLakeStorage.Main(s);
+            await SendToIotHub.Main(s);
 
-
-                //  create a blob client.
-                CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-
-                //  create a container 
-                CloudBlobContainer container = blobClient.GetContainerReference("norkartstorageaccount");
-
-
-                CloudAppendBlob appBlob = container.GetAppendBlobReference("Temperature&Humidity/" + DateTime.Now.ToString("yyyy-dd-M") + ".json");
-
-                //CloudAppendBlob appBlob = container.GetAppendBlobReference("TestFile.txt");
-
-                System.Diagnostics.Debug.WriteLine("APPBLOB EXISTS: " + appBlob.ExistsAsync().Result.ToString());
-                if (appBlob.ExistsAsync().Result.ToString() != "True")
-                {
-                    appBlob.CreateOrReplaceAsync();
-                }
-                //  create a local file
-                //StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss"), CreationCollisionOption.GenerateUniqueName);
-
-                //StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync("TestFile.txt", CreationCollisionOption.GenerateUniqueName);
-
-
-                var message = new Message(Encoding.ASCII.GetBytes(value));
-                deviceClient.SendEventAsync(message);
-                appBlob.AppendTextAsync(value + Environment.NewLine);
-
-
-            }
-            catch
-            {
-                //  return error
-                System.Diagnostics.Debug.WriteLine("STORAGE ERROR");
-
-            }
-            */
-
+            return;
 
         }
         
