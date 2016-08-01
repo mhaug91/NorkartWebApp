@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace norkartSommerWebApp.Controllers
 {
-    public class HelloWorldController : Controller
+    public class AirQualityController : Controller
     {
-        // GET: HelloWorld
+        // GET: AirQuality
         public ActionResult Index()
         {
             return View();
