@@ -13,8 +13,6 @@ namespace norkartSommerWebApp.Controllers
 
         public ActionResult Welcome(string name, int numTimes = 1)
         {
-            ViewBag.Message = "Hello testing" + name;
-            ViewBag.NumTimes = numTimes;
             return View();
         }
 

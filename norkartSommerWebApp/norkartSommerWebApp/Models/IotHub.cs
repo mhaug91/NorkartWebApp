@@ -23,14 +23,10 @@ namespace norkartSommerWebApp.Models
         private static async Task ReceiveFeedbackAsync(ServiceClient serviceClient)
         {
             var feedbackReceiver = serviceClient.GetFeedbackReceiver();
-            Debug.WriteLine("TEST");
-
 
             while (true)
             {
-                Debug.WriteLine("TEST2");
                 var feedbackBatch = await feedbackReceiver.ReceiveAsync();
-                Debug.WriteLine("TEST3");
                 if (feedbackBatch == null)
                 {
                     Debug.WriteLine("FEEDBACK: " + "Empty");
