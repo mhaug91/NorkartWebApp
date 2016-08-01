@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebApiController;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
-using System.Configuration;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using norkartSommerWebApp.Models;
 using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace norkartSommerWebApp.Models

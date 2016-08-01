@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Owin;
-using Owin;
-using System.Web.Http;
+﻿using System.Web.Http;
 
 
 namespace App_Start
