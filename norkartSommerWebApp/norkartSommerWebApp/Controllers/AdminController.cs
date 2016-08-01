@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using norkartSommerWebApp.Models;
 using System.Threading.Tasks;
+
 
 namespace norkartSommerWebApp.Controllers
 {
