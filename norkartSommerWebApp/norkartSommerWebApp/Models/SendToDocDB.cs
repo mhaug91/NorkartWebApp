@@ -11,7 +11,7 @@ namespace norkartSommerWebApp.Models
     {
         private const string EndpointUri = "https://norkartsommer16db.documents.azure.com:443/";
         private const string PrimaryKey = "nbhmi7c5pD1Pr3PrLfIcSu15evszCnE71zUQkURU7rt9fgV5tdSX7Ss4NEEH4v9Y0kIdCxXeoG6aesh43WR82Q==";
-        private DocumentClient client;
+        private DocumentClient _client;
         Microsoft.ApplicationInsights.TelemetryClient telemetry;
         
         public static async Task Main(JObject value, string dbName)
@@ -42,7 +42,7 @@ namespace norkartSommerWebApp.Models
         private async Task init(JObject value, string dbName)
         {
             telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
-            this.client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
+            this._client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
 
             var docName = value.Property("name").Value.ToString();
             //await deadlocks the program
@@ -59,7 +59,7 @@ namespace norkartSommerWebApp.Models
             // Check to verify a database with the name=databaseName does not exist
             try
             {
-                await this.client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName)).ConfigureAwait(false);
+                await this._client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName)).ConfigureAwait(false);
                 
             }
             catch (DocumentClientException de)
@@ -67,7 +67,7 @@ namespace norkartSommerWebApp.Models
                 // If the database does not exist, create a new database
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await this.client.CreateDatabaseAsync(new Database { Id = databaseName }).ConfigureAwait(false);
+                    await this._client.CreateDatabaseAsync(new Database { Id = databaseName }).ConfigureAwait(false);
                     telemetry.TrackTrace("Created New Database: " + databaseName);
                 }
                 else
@@ -81,7 +81,7 @@ namespace norkartSommerWebApp.Models
         {
             try
             {
-                await this.client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName)).ConfigureAwait(false);
+                await this._client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName)).ConfigureAwait(false);
                 
             }
             catch (DocumentClientException de)
@@ -98,7 +98,7 @@ namespace norkartSommerWebApp.Models
                     //Configure collections for maximum query flexibility including string range queries.
 
                     // Here we create a collection with 400 RU/s.
-                    await this.client.CreateDocumentCollectionAsync(
+                    await this._client.CreateDocumentCollectionAsync(
                         UriFactory.CreateDatabaseUri(databaseName),
                         collectionInfo,
                         new RequestOptions { OfferThroughput = 400 }).ConfigureAwait(false);
@@ -119,7 +119,7 @@ namespace norkartSommerWebApp.Models
             
             try
             {
-                await this.client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, jsonId.Value.ToString() )).ConfigureAwait(false);
+                await this._client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, jsonId.Value.ToString() )).ConfigureAwait(false);
             }
             //If document does not already exist: create new document
             catch (DocumentClientException de)
@@ -127,7 +127,7 @@ namespace norkartSommerWebApp.Models
                 System.Diagnostics.Debug.WriteLine("ERROR: " + de);
                 if (de.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await this.client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
+                    await this._client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), values).ConfigureAwait(false);
                     telemetry.TrackTrace("Created New Document: " + jsonId.Value.ToString());
                 }
                 else
