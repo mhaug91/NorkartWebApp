@@ -16,8 +16,8 @@ namespace norkartSommerWebApp.Models
     {
 
         static DeviceClient deviceClient;
-        static string iotHubUri = "barhaugTestIotHub.azure-devices.net";
-        static string deviceKey = "1b1G9sqX6zIwEZQ3C6QxUvPvhdD+yD9Asq9DuSTqCTA=";
+        static string iotHubUri = "norkartiothub.azure-devices.net";
+        static string deviceKey = "FIxa0952VFY3HLmlqERe+YZu8gFNBZPcdENX1rMKfvk=";
 
 
         private static async Task SendDeviceToCloudMessagesAsync(JObject obj)
