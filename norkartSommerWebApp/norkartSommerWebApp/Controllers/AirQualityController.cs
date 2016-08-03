@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace norkartSommerWebApp.Controllers
 {
-    public class HelloWorldController : Controller
+    public class AirQualityController : Controller
     {
-        // GET: HelloWorld
+        // GET: AirQuality
         public ActionResult Index()
         {
             return View();
@@ -16,8 +13,6 @@ namespace norkartSommerWebApp.Controllers
 
         public ActionResult Welcome(string name, int numTimes = 1)
         {
-            ViewBag.Message = "Hello testing" + name;
-            ViewBag.NumTimes = numTimes;
             return View();
         }
 

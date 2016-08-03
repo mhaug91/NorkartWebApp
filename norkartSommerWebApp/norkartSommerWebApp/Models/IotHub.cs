@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using Microsoft.Azure.Devices;
 using System.Threading.Tasks;
 using System.Text;
@@ -26,14 +23,10 @@ namespace norkartSommerWebApp.Models
         private static async Task ReceiveFeedbackAsync(ServiceClient serviceClient)
         {
             var feedbackReceiver = serviceClient.GetFeedbackReceiver();
-            Debug.WriteLine("TEST");
-
 
             while (true)
             {
-                Debug.WriteLine("TEST2");
                 var feedbackBatch = await feedbackReceiver.ReceiveAsync();
-                Debug.WriteLine("TEST3");
                 if (feedbackBatch == null)
                 {
                     Debug.WriteLine("FEEDBACK: " + "Empty");

@@ -1,23 +1,7 @@
-﻿using Microsoft.Azure.Devices.Client;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Web.Http;
-using WebApiController;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
-using System.Configuration;
+﻿using System.Web.Http;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using norkartSommerWebApp.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace WebApiController.Controllers
@@ -29,14 +13,23 @@ namespace WebApiController.Controllers
 
         public async Task PostAirQuality([FromBody]JObject s)
         {
-            var value = s.Property("telemetry").Value;
-            Debug.WriteLine(value);
+
             /*if (value.ToObject<int>() == 0)
             {
                 SendSmsModule.SendSms(value.ToString());
             }*/
-            //await SendToDocDb.Main(s, "Telemetry");
-            //await SendToLakeStorage.Main(s);
+
+            /*
+             * Data is now sent to documentDB and Lake Storage via Azure Stream Analytics. These are therefore obsolete but have not been deleted
+             * since they are examples of how it can be done via code.
+             * 
+             * await SendToDocDb.Main(s, "Telemetry");
+             * await SendToLakeStorage.Main(s);
+             */
+
+            /*
+             * IotHub sends data to Azure Stream Analytics which sends the data to documentDB & Lake Storage.
+             */
             await SendToIotHub.Main(s);
 
             return;

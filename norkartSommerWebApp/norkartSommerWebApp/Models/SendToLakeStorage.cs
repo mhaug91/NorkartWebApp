@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Microsoft.Azure.Management.DataLake.Analytics;
-using Microsoft.Azure.Management.DataLake.Analytics.Models;
 using Microsoft.Azure.Management.DataLake.Store;
-using Microsoft.Azure.Management.DataLake.Store.Models;
 using Microsoft.Azure.Management.DataLake.StoreUploader;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Rest;
@@ -13,7 +8,6 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using System.CodeDom.Compiler;
 using System.Reflection;
 
 namespace norkartSommerWebApp.Models
