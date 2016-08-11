@@ -22,16 +22,6 @@ namespace norkartSommerWebApp.Models
 
         private static async Task SendDeviceToCloudMessagesAsync(JObject obj)
         {
-            double avgWindSpeed = 10; // m/s
-            Random rand = new Random();            
-                double currentWindSpeed = avgWindSpeed + rand.NextDouble() * 4 - 2;
-
-                var telemetryDataPoint = new
-                {
-                    deviceId = "myFirstDevice",
-                    windSpeed = currentWindSpeed
-                };
-            //var messageString = JsonConvert.SerializeObject(telemetryDataPoint);
                 var messageString = JsonConvert.SerializeObject(obj);
                 var message = new Message(Encoding.ASCII.GetBytes(messageString));
 
